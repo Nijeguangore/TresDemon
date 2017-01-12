@@ -38,7 +38,10 @@ public class BaseRenderer implements GLEventListener {
 	private IntBuffer VBO = IntBuffer.wrap(new int[1]);
 	private int[] VAO = new int[1];
 	
-	public float[] camera;
+	private float[] camera;
+	public float[] cameraLocation = new float[]{0.0f,0.0f,1.0f};
+	public float[] cameraLookation = new float[]{0.0f,0.0f,-1.0f};
+	private float[] cameraUp = new float[]{0.0f,1.0f,0.0f};
 	public float[] perspective;
 	public float[] transform;
 	
@@ -54,8 +57,7 @@ public class BaseRenderer implements GLEventListener {
 		loadShaderSource(fragmentSrc,"FragmentShaderSrc");
 		
 		camera = new float[16];
-		FloatUtil.makeLookAt(camera, 0, new float[]{0.0f,0.0f,-10.5f}, 0, new float[]{0.0f,0.0f,0.0f},
-				0, new float[]{0.0f,1.0f,0.0f}, 0, new float[16]);
+		
 		
 		perspective = new float[16];
 		FloatUtil.makePerspective(perspective, 0, true, 45.0f, .75f ,0.001f, 100.0f);
@@ -81,7 +83,11 @@ public class BaseRenderer implements GLEventListener {
 			cameraPositionMatrix = gl.glGetUniformLocation(ProgramID, "cameraM");
 			perspectivePositionMatrix = gl.glGetUniformLocation(ProgramID, "perspectiveM");
 		}
+		gl.glUseProgram(ProgramID);
+		gl.glUniformMatrix4fv(uniTranslationMatrix, 1, false, transform,0);
 		
+		gl.glUniformMatrix4fv(perspectivePositionMatrix, 1, false, perspective,0);
+		gl.glUseProgram(0);
 	}
 
 	@Override
@@ -112,11 +118,14 @@ public class BaseRenderer implements GLEventListener {
 			gl.glBindVertexArray(0);
 			
 			gl.glUseProgram(ProgramID);
+			
+			FloatUtil.makeLookAt(camera, 0, cameraLocation, 0, cameraLookation,
+					0, cameraUp, 0, new float[16]);
+			gl.glUniformMatrix4fv(cameraPositionMatrix, 1, false, camera,0);
+			
 			gl.glBindVertexArray(VAO[0]);
 			
-			gl.glUniformMatrix4fv(uniTranslationMatrix, 1, false, transform,0);
-			gl.glUniformMatrix4fv(cameraPositionMatrix, 1, false, camera,0);
-			gl.glUniformMatrix4fv(perspectivePositionMatrix, 1, false, perspective,0);
+			
 			
 			
 			
@@ -189,5 +198,4 @@ public class BaseRenderer implements GLEventListener {
 		
 		return generatedProgram;
 	}
-	
 }
