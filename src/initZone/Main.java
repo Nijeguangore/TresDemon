@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 
 import javax.swing.JFrame;
 
+import com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.opengl.awt.GLJPanel;
 
@@ -16,6 +17,8 @@ public class Main {
 	public static boolean continueJuego = true;
 	public static boolean[] movementDirections = new boolean[4];
 	private static float delta = 0.05f;
+	private static float pitch = 0.0f;
+	private static float yaw = 0.0f;
 
 	public static void main(String[] args) {
 		JFrame window = new JFrame();
@@ -40,15 +43,22 @@ public class Main {
 		}
 		
 		while(continueJuego){
+			pingMouse(mouseCapturer,bgWipe);
 			pingKeyboard(keyboardListener,bgWipe);
 			glContext.display();
 		}
-		//Application not closing properly TODO
+		glContext.setDefaultCloseOperation(WindowClosingMode.DISPOSE_ON_CLOSE);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setVisible(false);
+		window.dispose();
 		return;
 	}
 	
+	private static void pingMouse(MouseMotionCapture mouseCapturer, BaseRenderer bgWipe) {
+		System.out.println(mouseCapturer.getX());
+		
+	}
+
 	public static void pingKeyboard(MainFrameKeyboardEar keys,BaseRenderer bR){
 		movementDirections = keys.getDir();
 		if(movementDirections[0]){
@@ -65,8 +75,8 @@ public class Main {
 		}
 		
 		bR.cameraLookation[0] = bR.cameraLocation[0];
-				bR.cameraLookation[1] = bR.cameraLocation[1];
-						bR.cameraLookation[2] = bR.cameraLocation[2] - 1.0f;
+		bR.cameraLookation[1] = bR.cameraLocation[1];
+		bR.cameraLookation[2] = bR.cameraLocation[2] - 1.0f;
 		
 	}
 

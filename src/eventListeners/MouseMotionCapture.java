@@ -32,11 +32,15 @@ public class MouseMotionCapture implements MouseMotionListener {
 	}
 	
 	public int getX(){
-		return X_1 - X_0;
+		int change = X_1 - X_0;
+		X_0 = X_1;
+		return change;
 	}
 	
 	public int getY(){
-		return Y_1 - Y_0;
+		int change = Y_1 - Y_0;
+		Y_0 = Y_1;
+		return change;
 	}
 
 }
